@@ -1,0 +1,17 @@
+model:
+  name: la_unet_swin_cbam
+
+  input_channels: 1
+  num_landmarks: 19
+
+  encoder:
+    type: swin
+    model_name: swin_tiny_patch4_window7_224
+    pretrained: true
+
+  decoder:
+    base_channels: 64
+
+  attention:
+    use_cbam: true
+    use_attention_gates: true

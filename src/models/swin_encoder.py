@@ -17,7 +17,11 @@ class SwinEncoder(nn.Module):
 
     def forward(self, x):
         features = self.backbone(x)
-        return features  # list: [stage1, stage2, stage3, stage4]
+
+        # timm Swin outputs features in NHWC -> convert to NCHW
+        features = [f.permute(0, 3, 1, 2).contiguous() for f in features]
+
+        return features
     """
   timm Swin Transformer output 4 feature maps:
     - stage1: 1/4 resolution

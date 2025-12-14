@@ -1,0 +1,27 @@
+training:
+  device: auto        
+  epochs: 150
+  batch_size: 2
+  learning_rate: 0.0001
+  weight_decay: 0.0001
+
+  loss:
+    type: heatmap
+    ssim_weight: 0.1
+
+  optimizer:
+    name: adamw
+
+  scheduler:
+    use: false
+
+data:
+  img_size: 224
+  heatmap_sigma: 4
+
+  train_csv: datasets/raw/train_senior.csv
+  val_csv: datasets/raw/test1_senior.csv
+  img_root: datasets/raw/cepha400/cepha400
+
+outputs:
+  checkpoint_path: outputs/checkpoints/la_unet_swin_cbam.pth

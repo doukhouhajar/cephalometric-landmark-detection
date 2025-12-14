@@ -1,0 +1,13 @@
+import os
+import json
+import yaml
+
+def load_yaml(path):
+    with open(path, "r") as f:
+        return yaml.safe_load(f)
+
+
+def save_json(path, data):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as f:
+        json.dump(data, f, indent=4)
