@@ -63,10 +63,10 @@ def main():
     # Loss
     loss_cfg = train_cfg["training"]["loss"]
     criterion = HeatmapLoss(
-        ssim_weight=loss_cfg["ssim_weight"],
         coord_weight=loss_cfg.get("coord_weight", 0.0),
         use_deep_supervision=loss_cfg.get("use_deep_supervision", True),
-        deep_supervision_weights=loss_cfg.get("deep_supervision_weights", [1.0, 0.5, 0.25, 0.125])
+        deep_supervision_weights=loss_cfg.get("deep_supervision_weights", [1.0, 0.4, 0.2, 0.1]),
+        loss_type=loss_cfg.get("type", "awing")  # awing handles class imbalance
     )
 
     # Optimizer

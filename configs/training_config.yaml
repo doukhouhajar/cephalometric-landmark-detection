@@ -6,8 +6,7 @@ training:
   weight_decay: 0.0001
 
   loss:
-    type: heatmap
-    ssim_weight: 0.1  # Increased SSIM weight
+    type: awing  # Options: awing, weighted_mse, focal_mse, mse
     coord_weight: 0.0
     use_deep_supervision: true
     deep_supervision_weights: [1.0, 0.4, 0.2, 0.1]
@@ -23,7 +22,7 @@ training:
 
 data:
   img_size: 224
-  heatmap_sigma: 6  # Increased for easier learning (larger Gaussian peaks)
+  heatmap_sigma: 10  # Large sigma to combat class imbalance
 
   train_csv: datasets/raw/train_senior.csv
   val_csv: datasets/raw/test1_senior.csv

@@ -60,9 +60,9 @@ def main():
     # Loss
     loss_cfg = train_cfg["training"]["loss"]
     criterion = HeatmapLoss(
-        ssim_weight=loss_cfg["ssim_weight"],
         coord_weight=loss_cfg.get("coord_weight", 0.0),
-        use_deep_supervision=False  # Baseline doesn't use deep supervision
+        use_deep_supervision=False,  # Baseline doesn't use deep supervision
+        loss_type=loss_cfg.get("type", "awing")
     )
 
     # Optimizer
