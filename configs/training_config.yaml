@@ -1,26 +1,29 @@
 training:
   device: auto        
   epochs: 80
-  batch_size: 2
-  learning_rate: 0.0003
+  batch_size: 4
+  learning_rate: 0.001  # Increased for faster initial learning
   weight_decay: 0.0001
 
   loss:
     type: heatmap
-    ssim_weight: 0.05
-    coord_weight: 0.0  # Set to 0 unless using coordinate augmentation
+    ssim_weight: 0.1  # Increased SSIM weight
+    coord_weight: 0.0
     use_deep_supervision: true
-    deep_supervision_weights: [1.0, 0.5, 0.25, 0.125]  # Main, aux2, aux3, aux4
+    deep_supervision_weights: [1.0, 0.4, 0.2, 0.1]
 
   optimizer:
     name: adamw
 
   scheduler:
-    use: false
+    use: true
+    type: cosine  # CosineAnnealingLR
+    warmup_epochs: 5
+    min_lr: 0.00001
 
 data:
   img_size: 224
-  heatmap_sigma: 4
+  heatmap_sigma: 6  # Increased for easier learning (larger Gaussian peaks)
 
   train_csv: datasets/raw/train_senior.csv
   val_csv: datasets/raw/test1_senior.csv

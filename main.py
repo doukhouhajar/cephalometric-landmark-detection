@@ -76,6 +76,16 @@ def main():
         weight_decay=train_cfg["training"]["weight_decay"]
     )
 
+    # Learning rate scheduler
+    scheduler = None
+    scheduler_cfg = train_cfg["training"].get("scheduler", {})
+    if scheduler_cfg.get("use", False):
+        scheduler = optim.lr_scheduler.CosineAnnealingLR(
+            optimizer,
+            T_max=train_cfg["training"]["epochs"] - scheduler_cfg.get("warmup_epochs", 5),
+            eta_min=scheduler_cfg.get("min_lr", 1e-6)
+        )
+
     # Trainer
     trainer = Trainer(
         model=model,
@@ -83,6 +93,7 @@ def main():
         val_loader=val_loader,
         criterion=criterion,
         optimizer=optimizer,
+        scheduler=scheduler,
         device=device
     )
 

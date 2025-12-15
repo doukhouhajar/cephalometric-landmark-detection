@@ -16,13 +16,16 @@ from .metrics import (
 
 class Trainer:
     def __init__(self, model, train_loader, val_loader, criterion, optimizer, 
-                 device="cuda", log_dir="outputs/logs", use_tensorboard=True):
+                 scheduler=None, device="cuda", log_dir="outputs/logs", 
+                 use_tensorboard=True, grad_clip=1.0):
         self.model = model.to(device)
         self.train_loader = train_loader
         self.val_loader = val_loader
         self.criterion = criterion
         self.optimizer = optimizer
+        self.scheduler = scheduler
         self.device = device
+        self.grad_clip = grad_clip
         self.log_dir = Path(log_dir)
         self.log_dir.mkdir(parents=True, exist_ok=True)
         
@@ -40,8 +43,12 @@ class Trainer:
             "train_loss": [],
             "val_loss": [],
             "val_mre": [],
-            "val_sdr": {}
+            "val_sdr": {},
+            "learning_rate": []
         }
+        
+        print(f"Training on device: {device}")
+        print(f"Model parameters: {sum(p.numel() for p in model.parameters()):,}")
 
     def train_epoch(self):
         self.model.train()
@@ -64,6 +71,11 @@ class Trainer:
 
             loss = self.criterion(preds, heatmaps, aux_outputs=aux_outputs)
             loss.backward()
+            
+            # Gradient clipping for stability
+            if self.grad_clip > 0:
+                torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.grad_clip)
+            
             self.optimizer.step()
 
             total_loss += loss.item()
@@ -147,7 +159,17 @@ class Trainer:
                         epoch
                     )
 
-            print(f"\nEpoch {epoch}/{epochs}")
+            # Step scheduler
+            current_lr = self.optimizer.param_groups[0]['lr']
+            self.history["learning_rate"].append(current_lr)
+            
+            if self.scheduler is not None:
+                self.scheduler.step()
+            
+            if self.writer:
+                self.writer.add_scalar("LR", current_lr, epoch)
+
+            print(f"\nEpoch {epoch}/{epochs} (lr: {current_lr:.6f})")
             print(f"Train Loss: {train_loss:.4f}")
             print(f"Val Loss:   {val_stats['loss']:.4f}")
             print(f"MRE:        {val_stats['mre']:.2f} px")

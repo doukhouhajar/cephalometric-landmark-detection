@@ -8,18 +8,29 @@ import albumentations as A
 from albumentations.pytorch.transforms import ToTensorV2
 from .heatmap_generator import generate_landmark_heatmaps 
 
+
 def get_transforms(img_size=512, is_train=True):
+    """
+    Get transforms for training/validation.
+    
+    NOTE: We avoid spatial augmentations (flip, rotate) because they require
+    coordinate transformation. Only intensity augmentations are safe here.
+    """
     if is_train:
         return A.Compose([
             A.Resize(img_size, img_size),
-            A.Rotate(limit=15, p=0.5),
-            A.RandomBrightnessContrast(p=0.4),
-            A.HorizontalFlip(p=0.5),
+            # Only intensity augmentations (don't affect landmark positions)
+            A.RandomBrightnessContrast(brightness_limit=0.2, contrast_limit=0.2, p=0.5),
+            A.GaussNoise(var_limit=(10.0, 50.0), p=0.3),
+            A.GaussianBlur(blur_limit=(3, 5), p=0.2),
+            # Normalize to [0, 1] - CRITICAL for training!
+            A.Normalize(mean=[0.0], std=[1.0], max_pixel_value=255.0),
             ToTensorV2()
-        ], is_check_shapes=False)  # Disable shape checking to avoid warnings
+        ], is_check_shapes=False)
     else:
         return A.Compose([
             A.Resize(img_size, img_size),
+            A.Normalize(mean=[0.0], std=[1.0], max_pixel_value=255.0),
             ToTensorV2()
         ], is_check_shapes=False)
 
