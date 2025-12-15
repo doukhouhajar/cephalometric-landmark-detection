@@ -16,12 +16,12 @@ def get_transforms(img_size=512, is_train=True):
             A.RandomBrightnessContrast(p=0.4),
             A.HorizontalFlip(p=0.5),
             ToTensorV2()
-        ])
+        ], is_check_shapes=False)  # Disable shape checking to avoid warnings
     else:
         return A.Compose([
             A.Resize(img_size, img_size),
             ToTensorV2()
-        ])
+        ], is_check_shapes=False)
 
 class CephaloDataset(Dataset):
     def __init__(self, csv_path, img_root, img_size=512, sigma=5, transforms=None):
@@ -82,7 +82,7 @@ class CephaloDataset(Dataset):
         }
 
 
-def get_dataloader(csv_path, img_root, batch_size=4, img_size=512, sigma=5, train=True):
+def get_dataloader(csv_path, img_root, batch_size=4, img_size=512, sigma=5, train=True, device="cuda"):
 
     transforms = get_transforms(img_size=img_size, is_train=train)
 
@@ -94,12 +94,15 @@ def get_dataloader(csv_path, img_root, batch_size=4, img_size=512, sigma=5, trai
         transforms=transforms
     )
 
+    # pin_memory only works with CUDA, not MPS (Mac GPU)
+    pin_memory = device == "cuda" and torch.cuda.is_available()
+
     loader = DataLoader(
         dataset,
         batch_size=batch_size,
         shuffle=train,
         num_workers=4,
-        pin_memory=True
+        pin_memory=pin_memory
     )
 
     return loader

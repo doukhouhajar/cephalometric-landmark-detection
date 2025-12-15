@@ -1,22 +1,18 @@
-import os
+"""
+Train baseline U-Net model for comparison.
+"""
 import torch
 import torch.optim as optim
-import warnings
-
-# Suppress albumentations version check warnings
-os.environ["ALBUMENTATIONS_CHECK_VERSION"] = "0"
-warnings.filterwarnings("ignore", message=".*albumentations.*")
 
 from src.data.data_pipeline import get_dataloader
-from src.models.la_unet import LA_UNet
+from src.models.baseline_unet import BaselineUNet
 from src.training.losses import HeatmapLoss
 from src.training.trainer import Trainer
 from src.training.utils import load_yaml
 
 
 def main():
-
-    # LOAD CONFIGS
+    # Load configs
     model_cfg = load_yaml("configs/model_config.yaml")
     train_cfg = load_yaml("configs/training_config.yaml")
 
@@ -55,9 +51,10 @@ def main():
         device=device
     )
 
-    # Model
-    model = LA_UNet(
-        num_landmarks=model_cfg["model"]["num_landmarks"]
+    # Model (Baseline U-Net)
+    model = BaselineUNet(
+        num_landmarks=model_cfg["model"]["num_landmarks"],
+        in_channels=3  # Converted to 3-channel for consistency
     )
 
     # Loss
@@ -65,8 +62,7 @@ def main():
     criterion = HeatmapLoss(
         ssim_weight=loss_cfg["ssim_weight"],
         coord_weight=loss_cfg.get("coord_weight", 0.0),
-        use_deep_supervision=loss_cfg.get("use_deep_supervision", True),
-        deep_supervision_weights=loss_cfg.get("deep_supervision_weights", [1.0, 0.5, 0.25, 0.125])
+        use_deep_supervision=False  # Baseline doesn't use deep supervision
     )
 
     # Optimizer
@@ -83,15 +79,21 @@ def main():
         val_loader=val_loader,
         criterion=criterion,
         optimizer=optimizer,
-        device=device
+        device=device,
+        log_dir="outputs/logs/baseline"
     )
 
     # Train
+    ckpt_path = "outputs/checkpoints/baseline_unet.pth"
     trainer.fit(
         epochs=train_cfg["training"]["epochs"],
-        ckpt_path=train_cfg["outputs"]["checkpoint_path"]
+        ckpt_path=ckpt_path
     )
+
+    print(f"\nBaseline model training completed!")
+    print(f"Checkpoint saved to: {ckpt_path}")
 
 
 if __name__ == "__main__":
     main()
+

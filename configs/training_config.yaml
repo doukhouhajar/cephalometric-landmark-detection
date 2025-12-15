@@ -1,13 +1,16 @@
 training:
   device: auto        
-  epochs: 150
+  epochs: 80
   batch_size: 2
-  learning_rate: 0.0001
+  learning_rate: 0.0003
   weight_decay: 0.0001
 
   loss:
     type: heatmap
-    ssim_weight: 0.1
+    ssim_weight: 0.05
+    coord_weight: 0.0  # Set to 0 unless using coordinate augmentation
+    use_deep_supervision: true
+    deep_supervision_weights: [1.0, 0.5, 0.25, 0.125]  # Main, aux2, aux3, aux4
 
   optimizer:
     name: adamw
