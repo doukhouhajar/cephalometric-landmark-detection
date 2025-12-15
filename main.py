@@ -60,13 +60,13 @@ def main():
         num_landmarks=model_cfg["model"]["num_landmarks"]
     )
 
-    # Loss
+    # Loss - Combined weighted heatmap + coordinate supervision
     loss_cfg = train_cfg["training"]["loss"]
     criterion = HeatmapLoss(
-        coord_weight=loss_cfg.get("coord_weight", 0.0),
+        coord_weight=loss_cfg.get("coord_weight", 5.0),  # Strong coordinate supervision
         use_deep_supervision=loss_cfg.get("use_deep_supervision", True),
         deep_supervision_weights=loss_cfg.get("deep_supervision_weights", [1.0, 0.4, 0.2, 0.1]),
-        loss_type=loss_cfg.get("type", "awing")  # awing handles class imbalance
+        loss_type=loss_cfg.get("type", "combined")
     )
 
     # Optimizer

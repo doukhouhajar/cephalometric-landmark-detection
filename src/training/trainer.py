@@ -57,6 +57,7 @@ class Trainer:
         for batch in tqdm(self.train_loader):
             images = batch["image"].to(self.device)
             heatmaps = batch["heatmaps"].to(self.device)
+            gt_coords = batch["coords"].to(self.device)  # Get coordinates for supervision
 
             self.optimizer.zero_grad()
 
@@ -69,7 +70,8 @@ class Trainer:
                 preds = outputs
                 aux_outputs = None
 
-            loss = self.criterion(preds, heatmaps, aux_outputs=aux_outputs)
+            # Pass gt_coords for coordinate supervision
+            loss = self.criterion(preds, heatmaps, gt_coords=gt_coords, aux_outputs=aux_outputs)
             loss.backward()
             
             # Gradient clipping for stability
