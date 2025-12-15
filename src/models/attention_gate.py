@@ -29,7 +29,15 @@ class AttentionGate(nn.Module):
         g1 = self.W_g(g)
         x1 = self.W_x(x)
 
+        # resize skip feature to decoder resolution
+        if x1.shape[2:] != g1.shape[2:]:
+            x1 = F.interpolate(x1, size=g1.shape[2:], mode="bilinear", align_corners=False)
+
         psi = self.relu(g1 + x1)
         psi = self.psi(psi)
+
+        # resize attention map back to x resolution if needed
+        if psi.shape[2:] != x.shape[2:]:
+            psi = F.interpolate(psi, size=x.shape[2:], mode="bilinear", align_corners=False)
 
         return x * psi
