@@ -171,26 +171,4 @@ The analysis script generates publication-ready plots:
 5. **Heatmap Visualizations**: Model confidence maps for each landmark
 6. **Sample Overlays**: Qualitative results on test images
 
-## Citation
-
-If you use this code in your research, please cite:
-
-```bibtex
-@article{cephalometric2024,
-  title={Automatic Cephalometric Landmark Detection using Heatmap Regression with Transformer-Enhanced U-Net},
-  author={Your Name},
-  journal={Journal Name},
-  year={2024}
-}
-```
-
-## License
-
-[Your License]
-
-## Acknowledgments
-
-- Swin Transformer implementation from `timm`
-- U-Net architecture inspiration from original paper
-- CBAM attention mechanism
 

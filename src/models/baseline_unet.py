@@ -1,7 +1,3 @@
-"""
-Baseline U-Net model for comparison.
-Standard U-Net architecture without transformer encoder or attention mechanisms.
-"""
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

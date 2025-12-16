@@ -84,7 +84,7 @@ def main():
             optimizer,
             T_max=train_cfg["training"]["epochs"] - scheduler_cfg.get("warmup_epochs", 5),
             eta_min=scheduler_cfg.get("min_lr", 1e-6)
-        )
+    )
 
     # Trainer
     trainer = Trainer(

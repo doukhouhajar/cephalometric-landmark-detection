@@ -1,6 +1,3 @@
-"""
-Train baseline U-Net model for comparison.
-"""
 import torch
 import torch.optim as optim
 

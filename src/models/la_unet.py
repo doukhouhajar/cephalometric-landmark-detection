@@ -45,7 +45,7 @@ class LA_UNet(nn.Module):
 
         # Output heatmaps (main output)
         self.final = nn.Conv2d(64, num_landmarks, kernel_size=1)
-        
+
         # Multi-resolution deep supervision outputs
         self.ds4 = nn.Conv2d(512, num_landmarks, kernel_size=1)  # 1/4 resolution
         self.ds3 = nn.Conv2d(256, num_landmarks, kernel_size=1)  # 1/2 resolution

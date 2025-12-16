@@ -1,6 +1,3 @@
-"""
-Gradio interface for interactive cephalometric landmark detection.
-"""
 import gradio as gr
 import torch
 import numpy as np

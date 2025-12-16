@@ -1,7 +1,3 @@
-"""
-Loss functions for heatmap-based landmark detection.
-Combines weighted heatmap loss + coordinate supervision to fix class imbalance.
-"""
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -43,13 +39,13 @@ class CombinedLandmarkLoss(nn.Module):
         self.heatmap_weight = heatmap_weight
         self.coord_weight = coord_weight
         self.heatmap_loss = AggressiveWeightedMSE(pos_weight=pos_weight)
-        
+
     def forward(self, pred, target, gt_coords=None):
         # Heatmap loss
         heatmap_loss = self.heatmap_loss(pred, target)
-        
+
         total_loss = self.heatmap_weight * heatmap_loss
-        
+
         # Coordinate supervision - THIS IS KEY
         if gt_coords is not None:
             pred_coords = soft_argmax_2d(pred)
