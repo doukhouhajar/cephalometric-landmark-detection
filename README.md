@@ -160,15 +160,5 @@ cephalometric-landmark-detection/
 3. **Hybrid Attention**: CBAM + Attention Gates for improved feature representation
 4. **Comprehensive Evaluation Framework**: Per-landmark analysis and multiple metric tracking
 
-## Results and Visualizations
-
-The analysis script generates publication-ready plots:
-
-1. **Training Curves**: Loss, MRE, and SDR evolution
-2. **Error Distributions**: Statistical analysis of prediction errors
-3. **Per-Landmark Performance**: Individual landmark difficulty analysis
-4. **Model Comparison**: Baseline vs. proposed architecture
-5. **Heatmap Visualizations**: Model confidence maps for each landmark
-6. **Sample Overlays**: Qualitative results on test images
 
 
